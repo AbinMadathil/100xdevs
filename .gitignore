@@ -1,0 +1,35 @@
+# Ignore all node_modules recursively
+**/node_modules/
+
+# Ignore all build or dist folders recursively
+**/build/
+**/dist/
+
+# Ignore all .env files recursively
+**/.env
+
+# Ignore logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Editor/IDE settings
+.vscode/
+.idea/
+*.swp
+
+# Test coverage and temp folders
+**/coverage/
+**/.cache/
+**/tmp/
+**/temp/
+
+# Ignore lock files across all apps (optional)
+# Uncomment if you don’t want to commit lock files
+# **/package-lock.json
+# **/yarn.lock
