@@ -31,5 +31,5 @@ Thumbs.db
 
 # Ignore lock files across all apps (optional)
 # Uncomment if you don’t want to commit lock files
-# **/package-lock.json
+ **/package-lock.json
 # **/yarn.lock
