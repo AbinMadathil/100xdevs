@@ -1,4 +1,6 @@
 const express = require('express');
+const { CreateTodoSchema, UpdateTodoSchema } = require('./types');
+const { todoSchema } = require('./db');
 const app = express();
 
 
@@ -23,18 +25,20 @@ app.get('/', (req,res)=>{
     res.send("TODO Application");
 })
 
-app.post('/todos',(req,res)=>{
+app.post('/todos',async (req,res)=>{
     const todo = req.body;
+    const todoValidation = CreateTodoSchema.parse(todoPayload);
 
-    if(!todo.title || !todo.description){
-        return res.status(400).send("Title and description are required");
+    if(!todoValidation.success){
+        return res.status(400).send(todo.error);
     }
-    if(!todo.isCompleted){
-        todo.isCompleted = false;
-    }
-
-    todoList.push(todo);
-    return res.status(201).send(todo);
+    await todoSchema.create({
+        title: todo.title,
+        description: todo.description
+    })
+    res.status(201).send({
+        message: "Todo Created Succesfully"
+    })
 })
 
 
@@ -44,6 +48,10 @@ app.get('/todos',(req,res)=>{
 
 app.put('/completed:id',(req,res)=>{
     const id = req.params.id;
+    const idValidation = UpdateTodoSchema.parse(idFromPayload);
+    if(!idValidation.success){
+        return res.status(400).send(id.error);
+    }
     const todo = todoList.find(t=>t.id ==id);
     if(!todo){
         return res.status(404).send("Todo not found");
