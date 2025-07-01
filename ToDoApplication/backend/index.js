@@ -1,38 +1,28 @@
 const express = require('express');
 const { CreateTodoSchema, UpdateTodoSchema } = require('./types');
-const { todoSchema } = require('./db');
+const { ToDo, connectDB } = require('./db');
 const app = express();
 
 
 app.use(express.json());
 
-const todoList = [
-    {
-        id: 1,
-        title: "Learn React",
-        description: "Learn React by building a simple app",
-        isCompleted: false
-    },
-    {
-        id: 2,
-        title: "Learn Node",
-        description: "Learn Node by building a simple backend",
-        isCompleted: false
-    }    
-]
 
-app.get('/', (req,res)=>{
-    res.send("TODO Application");
+//get all todos 
+app.get('/', async (req,res)=>{
+    const todos = await ToDo.find({});
+    res.status(200).send(todos);
 })
 
-app.post('/todos',async (req,res)=>{
+//create a todo
+app.post('/todo',async (req,res)=>{
     const todo = req.body;
-    const todoValidation = CreateTodoSchema.parse(todoPayload);
+    const todoValidation = CreateTodoSchema.safeParse(todo);
+    //parse does not return success or error, it returns an object with success and error properties.
 
     if(!todoValidation.success){
-        return res.status(400).send(todo.error);
+        return res.status(400).send(todoValidation.error);
     }
-    await todoSchema.create({
+    await ToDo.create({
         title: todo.title,
         description: todo.description
     })
@@ -41,24 +31,30 @@ app.post('/todos',async (req,res)=>{
     })
 })
 
-
-app.get('/todos',(req,res)=>{
-    return res.status(200).send(todoList);
+//get a particular todo
+app.get('/todos',async (req,res)=>{
+    const todos = await ToDo.find({});
+    res.status(200).send(todos);
 })
 
-app.put('/completed:id',(req,res)=>{
+//complete a todo
+app.put('/completed:id',async (req,res)=>{
     const id = req.params.id;
     const idValidation = UpdateTodoSchema.parse(idFromPayload);
     if(!idValidation.success){
         return res.status(400).send(id.error);
     }
-    const todo = todoList.find(t=>t.id ==id);
-    if(!todo){
-        return res.status(404).send("Todo not found");
-    }
-    todo.isCompleted = true;
-    return res.status(200).send(todo);
+    const todo = await ToDo.find({id: {$in: [id]}});
+    const updateValues = req.body;
+    todo.isCompleted = updateValues.isCompleted;
+    await todo.save();
+    return res.status(200).send({
+        message: "Todo Updated Successfully",
+        value: todo
+    });
 })
+
+
 
 
 
@@ -66,4 +62,5 @@ app.put('/completed:id',(req,res)=>{
 
 app.listen(3002,()=>{
     console.log("Servers is listening on port 3002");
+    connectDB();
 })

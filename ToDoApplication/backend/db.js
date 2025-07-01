@@ -1,12 +1,13 @@
 const mongoose = require('mongoose');
+const nconf = require('nconf');
+
+nconf.argv().env().file({file: "./development.json"});
 
 const connectDB = async () => {
     try {
-        await mongoose.connect('mongodb://localhost:27017/todoapp', {
-            useNewUrlParser: true,
-            useUnifiedTopology: true
+        const connection = await mongoose.connect(nconf.get("MONGODB_CONNECTION_STRING"), {
         });
-        console.log("MongoDB connected successfully");
+        console.log("MongoDB connected successfully", connection.connection.host);
     } catch (error) {
         console.error("MongoDB connection failed:", error);
         process.exit(1);
@@ -19,9 +20,10 @@ const todoSchema = mongoose.Schema({
     isCompleted: Boolean
 });
 
-mongoose.model('Todo', todoSchema);
+const ToDo = mongoose.model('Todo', todoSchema);
 
 
 module.exports = {
-    todoSchema
+    ToDo,
+    connectDB
 }

@@ -1,0 +1,3 @@
+{
+    "MONGODB_CONNECTION_STRING": "mongodb+srv://admin:SamplePass@100xdevsabin.u38uyi.mongodb.net/todoApplication"
+}
