@@ -1,6 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 import React, { useState } from 'react';
+import { CreateToDo } from './components/CreateToDo';
 
 function App() {
   //this is a basic todo app using React, that was built for studying purposes.
@@ -28,10 +29,11 @@ function App() {
 
   return (
     <div className="App">
-          <button onClick={AddTODo}> add a random todo</button>
+      <CreateToDo />
+          {/* <button onClick={AddTODo}> add a random todo</button>
       {toDos.map(function(todo){ 
         return <HandleAddToDo title={todo.title} description={todo.description} />
-        })}
+        })} */}
     </div>
   );
 }
